@@ -20,14 +20,6 @@
 	">
 	
 
-<!-- 
-Oracle ID/PW   (src/main/resources/oracle.properties )
-MyBatis 설정파일 (src/main/resources/mybatis-context.xml)
-MyBatis 매퍼파일 (src/main/resources/mappers/  *-map.xml)
-MyBatis SQL로그 (src/main/resources/log4j.xml)	     
-MyBatis 매퍼인터페이스.java가 놓일 패키지 생성 : com.kosta.semi.mappers
- -->	
-	
 	
 	
 	<!-- ===============================[어노테이션 기반으로 동작]================================== -->
@@ -125,4 +117,9 @@ MyBatis 매퍼인터페이스.java가 놓일 패키지 생성 : com.kosta.semi.m
 	</bean>
 	<!-- ################################################################################  -->
 	
+	<!-- 파일업로드 관련 설정 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="10000000"/> <!-- 10MB -->
+    </bean>
+    
 </beans>
