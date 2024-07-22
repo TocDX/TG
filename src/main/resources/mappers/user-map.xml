@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  interface UserMapper.java를 사용할 경우 -->
+<mapper namespace="com.tg.mappers.UserMapper">
+
+    <resultMap id="userMap_ID" type="com.tg.vo.UserVO">
+        <id property="userSeq" column="user_seq" />
+        <result property="userEmail" column="user_email" />
+        <result property="userPw" column="user_pw" />
+        <result property="userName" column="user_name" />
+        <result property="userGubun" column="user_gubun" />
+        <result property="userPhone" column="user_phone" />
+        <result property="regdate" column="regdate" />
+        <result property="profileImg" column="profile_img" />
+    </resultMap>
+
+    <insert id="userInsert" parameterType="com.tg.vo.UserVO">
+        INSERT INTO users(user_seq, user_email, user_pw, user_name, user_phone, profile_img)
+        VALUES(users_sequence.nextval, #{userEmail}, #{userPw}, #{userName}, #{userPhone}, #{profileImg})
+    </insert>
+
+    <select id="allUser" resultType="com.tg.vo.UserVO">
+        SELECT user_seq AS userSeq, user_email AS userEmail, user_pw AS userPw, user_name AS userName, 
+               user_gubun AS userGubun, user_phone AS userPhone, regdate AS regdate, profile_img AS profileImg
+        FROM users
+    </select>
+
+    <select id="userLogin" parameterType="com.tg.vo.UserVO" resultMap="userMap_ID">
+        SELECT * FROM users 
+        WHERE user_email = #{userEmail} AND user_pw = #{userPw}
+    </select>
+    
+    <select id="userSelectOne" parameterType="int" resultMap="userMap_ID">
+        SELECT * FROM users 
+        WHERE user_seq = #{userSeq}
+    </select>
+    
+    <update id="userUpdate" parameterType="com.tg.vo.UserVO">
+        UPDATE users 
+        SET user_pw = #{userPw}, user_name = #{userName} 
+            user_phone = #{userPhone}, profile_img = #{profileImg}
+        WHERE user_seq = #{userSeq}
+    </update>
+
+    <delete id="userDelete" parameterType="int">
+        DELETE FROM users WHERE user_seq = #{userSeq}
+    </delete>
+
+</mapper>
+
+
+
+  

@@ -129,6 +129,5 @@ public class DetailIntroVO {
         private String spendtimefestival;
         private String festivalgrade;
 
-
     }
 }

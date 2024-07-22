@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tg.mappers.RegionMapper">
+
+    <insert id="insertRegion" parameterType="com.tg.vo.AreaBasedListVO$Item">
+        INSERT INTO region_seoul (
+            addr1, addr2, areacode, booktour, cat1, cat2, cat3, 
+            contentid, contenttypeid, createdtime, dist, firstimage, 
+            firstimage2, cpyrhtDivCd, mapx, mapy, mlevel, 
+            modifiedtime, sigungucode, tel, title
+        ) VALUES (
+            #{addr1}, #{addr2}, #{areacode}, #{booktour}, #{cat1}, #{cat2}, #{cat3}, 
+            #{contentid}, #{contenttypeid}, #{createdtime}, #{dist}, #{firstimage}, 
+            #{firstimage2}, #{cpyrhtDivCd}, #{mapx}, #{mapy}, #{mlevel}, 
+            #{modifiedtime}, #{sigungucode}, #{tel}, #{title}
+        )
+    </insert>
+    
+</mapper>
+
+

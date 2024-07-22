@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.tg.mappers.CommonMapper">
+
+    <insert id="insertCommon" parameterType="com.tg.vo.DetailCommonVO$Item">
+    INSERT INTO detailcommon (
+        contentid, contenttypeid, title, createdtime, modifiedtime, tel, telname, homepage,
+        booktour, firstimage, firstimage2, cpyrhtDivCd, areacode, sigungucode, cat1,
+        cat2, cat3, addr1, addr2, zipcode, mapx, mapy, mlevel, overview
+    ) VALUES (
+                 '12345', '12', 'Sample Title', '20240716', '20240716', '010-1234-5678', 'Sample Name', 'http://sample.com',
+                 'Yes', 'http://sample.com/image1.jpg', 'http://sample.com/image2.jpg', 'Type3', '32', '1', 'A02',
+                 'A0207', 'A02070200', 'Sample Address 1', 'Sample Address 2', '12345', '128.8921226461', '37.7532767444', '6', 'Sample Overview'
+             )
+    </insert>
+
+</mapper>

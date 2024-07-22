@@ -1,9 +1,8 @@
 package com.tg.vo;
-
 import lombok.Data;
 
 import java.util.List;
-
+@Data
 public class SearchFestivalVO {
     private Response response;
 
@@ -131,7 +130,10 @@ public class SearchFestivalVO {
         private String sigungucode;
         private String tel;
         private String title;
-
+        private int viewcnt;
+        int startSeq = 1;
+        int endSeq = 1;
+        int currentPage = 1;
         // Getters and Setters
         // (생략, 필요 시 생성)
     }

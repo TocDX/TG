@@ -128,7 +128,10 @@ public class AreaBasedListVO {
         private String sigungucode;
         private String tel;
         private String title;
-
+        private int viewcnt;
+        int startSeq = 1;
+        int endSeq = 1;
+        int currentPage = 1;
 
     }
 }

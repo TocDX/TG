@@ -31,7 +31,9 @@
 	<!-- =============================== 자바의 classpth: 자바 코드에서 필요한 설정파일들 넣어놓는 위치
 	     /src/main/resources/**  ${webappRoot}/resources directory -->
 	<mvc:resources mapping="/resources/**" location="/resources/" />
-	
+	<mvc:resources mapping="/user/imgs/**"  location="/user/imgs/" />
+	<mvc:resources mapping="/board/imgs/**" location="/board/imgs/" />
+
 	<!-- =============================== /  +  @Controllers 리턴값 + .jsp     -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/" />

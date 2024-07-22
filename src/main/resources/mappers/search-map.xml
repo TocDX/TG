@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tg.mappers.SearchMapper">
+
+    <select id="searchContent" parameterType="string" resultType="com.tg.vo.AreaBasedListVO$Item">
+        SELECT *
+        FROM region_seoul
+        WHERE TITLE LIKE '%' || #{keyword} || '%'
+           OR TITLE LIKE '%' || #{keyword} || '%'
+    </select>
+
+    <select id="searchFestival" parameterType="string" resultType="com.tg.vo.SearchFestivalVO$Item">
+        SELECT *
+        FROM search_festival
+        WHERE TITLE LIKE '%' || #{keyword} || '%'
+           OR TITLE LIKE '%' || #{keyword} || '%'
+    </select>
+
+    <select id="searchBoard" parameterType="string" resultType="com.tg.vo.BoardVO">
+        SELECT SEQ, TITLE, CONTENTS, USER_SEQ, REGDATE
+        FROM board
+        WHERE TITLE LIKE '%' || #{keyword} || '%'
+           OR contents LIKE '%' || #{keyword} || '%'
+    </select>
+
+</mapper>

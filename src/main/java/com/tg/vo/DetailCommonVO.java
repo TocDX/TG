@@ -132,6 +132,6 @@ public class DetailCommonVO {
     private String mapy;
     private String mlevel;
     private String overview;
-
-}
+    private int viewcnt;
+    }
 }

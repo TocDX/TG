@@ -1,0 +1,74 @@
+@font-face {
+    font-family: 'NanumSquareNeo-Variable';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumBarunGothic';
+    font-style: normal;
+    font-weight: 400;
+    src: url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.eot');
+    src: url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.eot?#iefix') format('embedded-opentype'),
+    url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.woff') format('woff'),
+    url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.ttf') format('truetype');
+}
+
+body {
+    font-family: 'NanumSquareNeo-Variable';
+    background-color: #f8f9fa;
+}
+
+.container {
+    margin-top: 5rem;
+    max-width: 600px;
+}
+
+h1 {
+    font-family: 'NanumSquareNeo-Variable';
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.form-label {
+    font-size: larger;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.form-control {
+    border-style: solid;
+    border-color: darkgrey;
+    border-width: 2px;
+    border-radius: .5rem;
+    height: 3rem;
+    font-family: 'NanumSquareNeo-Variable';
+}
+
+.btn-primary {
+    background-color: #FFCD00;
+    border-color: #d7ac00;
+    color: black;
+    font-family: 'NanumSquareNeo-Variable';
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-primary:hover {
+    background-color: white;
+    color: #d7ac00;
+    border-color: #d7ac00;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: grey;
+    font-family: 'NanumSquareNeo-Variable';
+}

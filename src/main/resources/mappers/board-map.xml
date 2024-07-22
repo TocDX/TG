@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.tg.mappers.BoardMapper">    
+    <!-- 댓글만 -->
+    <resultMap id="replyResultMap" type="com.tg.vo.ReplyVO">
+        <id property="rseq" column="rseq" />
+        <result property="reply" column="reply" />
+        <result property="userSeq" column="user_seq" />
+        <result property="regdate" column="regdate" />
+        <result property="seq" column="seq" />
+        <association property="userVO" resultMap="userResultMap" />
+    </resultMap>
+    
+    <!-- 파일만 -->
+    <resultMap id="fileResultMap" type="com.tg.vo.FileVO">
+        <id property="fseq" column="fseq" />
+        <result property="oname" column="oname" />
+        <result property="sname" column="sname" />
+        <result property="fsize" column="fsize" />
+        <result property="fpath" column="fpath" />
+        <result property="seq" column="seq" />
+    </resultMap>
+    
+    <!--  유저만 -->
+    <resultMap id="userResultMap" type="com.tg.vo.UserVO">
+	    <id property="userSeq" column="USER_SEQ"/>
+	    <result property="userEmail" column="USER_EMAIL"/>
+	    <result property="userPw" column="USER_PW"/>
+	    <result property="userName" column="USER_NAME"/>
+	    <result property="userGubun" column="USER_GUBUN"/>
+	    <result property="userPhone" column="USER_PHONE"/>
+	    <result property="regdate" column="REGDATE"/>
+	    <result property="profileImg" column="PROFILE_IMG"/>
+	</resultMap>
+	
+
+    <!-- 게시물+파일+댓글 -->
+    <resultMap id="boardResultMapByMap" type="com.tg.vo.BoardVO">
+        <id property="seq" column="seq" />
+        <result property="title" column="title" />
+        <result property="contents" column="contents" />
+        <result property="userSeq" column="user_seq" />
+        <result property="regdate" column="regdate" />
+        <association property="userVO" resultMap="userResultMap" />
+        <collection property="replies" ofType="com.tg.vo.ReplyVO" resultMap="replyResultMap" />
+        <collection property="files" ofType="com.tg.vo.FileVO" resultMap="fileResultMap" />
+    </resultMap>
+    
+    <!-- 게시물 + 파일 -->
+    <resultMap id="boardFileMap" type="com.tg.vo.BoardVO">
+        <id property="seq" column="seq" />
+        <result property="title" column="title" />
+        <result property="contents" column="contents" />
+        <result property="userSeq" column="user_seq" />
+        <result property="regdate" column="regdate" />
+        <collection property="files" ofType="com.tg.vo.FileVO" resultMap="fileResultMap" />
+    </resultMap>
+    
+    
+    
+    <!-- 하버사인 알로리즘 적용 : 위경도 좌표 반경 5키로 까지 검색 -->
+	<select id="searchImgByKakao" parameterType="com.tg.vo.DetailCommonVO$Item" resultType="com.tg.vo.DetailCommonVO$Item">
+    <![CDATA[
+        SELECT firstimage
+        FROM (
+            SELECT FIRSTIMAGE,
+                   (6371 * ACOS(
+                        COS(#{mapy} * (3.141592653589793 / 180)) * COS(MAPY * (3.141592653589793 / 180)) * COS(MAPX * (3.141592653589793 / 180) - #{mapx} * (3.141592653589793 / 180))
+                        + SIN(#{mapy} * (3.141592653589793 / 180)) * SIN(MAPY * (3.141592653589793 / 180))
+                   )) AS distance
+            FROM detail_common
+            WHERE (6371 * ACOS(
+                        COS(#{mapy} * (3.141592653589793 / 180)) * COS(MAPY * (3.141592653589793 / 180)) * COS(MAPX * (3.141592653589793 / 180) - #{mapx} * (3.141592653589793 / 180))
+                        + SIN(#{mapy} * (3.141592653589793 / 180)) * SIN(MAPY * (3.141592653589793 / 180))
+                   )) <= 5
+            ORDER BY distance
+        )
+        WHERE ROWNUM = 1
+    ]]>
+	</select>
+	
+    
+    <select id="boardCount" resultType="int">
+        SELECT COUNT(1) AS cnt FROM board
+    </select>
+    
+    <select id="boardSelect" parameterType="map" resultType="com.tg.vo.BoardVO">
+        SELECT s.*
+        FROM (
+            SELECT b.*, u.user_name, ROW_NUMBER() OVER(ORDER BY b.seq DESC) AS rnum
+			FROM board b, users u
+			where b.user_seq = u.user_seq(+)
+        ) s
+        WHERE s.rnum BETWEEN #{startSeq} AND #{endSeq}
+    </select>
+    
+    <select id="getReplyBySeq" resultType="com.tg.vo.ReplyVO">
+	    SELECT r.rseq, r.reply, r.user_seq AS userSeq, r.regdate, r.seq, u.user_name as userName
+		FROM reply r, users u
+		WHERE seq = {seq} 
+			and r.user_seq=u.user_seq(+)
+    </select>
+    
+    <select id="getFilesBySeq" resultType="com.tg.vo.FileVO">
+        SELECT fseq, oname, sname, fsize, fpath, seq
+        FROM board_file
+        WHERE seq = #{seq}
+    </select>
+    
+    <select id="boardReplySelect" parameterType="int" resultMap="boardResultMapByMap">
+        SELECT b.seq, b.title, b.contents, b.user_seq AS userSeq, b.regdate,
+               r.rseq, r.reply, r.user_seq AS rUserSeq, r.regdate AS rRegdate
+        FROM board b
+        LEFT JOIN reply r ON b.seq = r.seq
+        WHERE b.seq = #{seq}
+        ORDER BY r.rseq DESC
+    </select>
+    
+    <select id="boardSelectOne" parameterType="int" resultType="com.tg.vo.BoardVO">
+        SELECT * FROM board WHERE seq = #{seq}
+    </select>
+    
+    <select id="replySelect" parameterType="int" resultType="com.tg.vo.ReplyVO">
+        SELECT * FROM reply WHERE seq = #{seq} ORDER BY rseq DESC
+    </select>
+    
+    <select id="boardFileSelectOne" parameterType="int" resultMap="boardFileMap">
+        SELECT b.seq, b.title, b.contents, b.user_seq AS userSeq, b.regdate,
+               f.fseq, f.oname, f.sname, f.fsize, f.fpath
+        FROM board b
+        LEFT JOIN board_file f ON b.seq = f.seq
+        WHERE b.seq = #{seq}
+    </select>
+    
+    <insert id="boardInsert" parameterType="com.tg.vo.BoardVO">
+        <selectKey keyProperty="seq" resultType="int" order="AFTER">
+            SELECT board_seq.currval FROM dual
+        </selectKey>
+        INSERT INTO board (seq, title, contents, user_seq, regdate)
+        VALUES (board_seq.nextval, #{title}, #{contents}, #{userSeq}, sysdate)
+    </insert>
+    
+    <insert id="boardFileInsert" parameterType="com.tg.vo.FileVO">
+        INSERT INTO board_file (fseq, oname, sname, fsize, fpath, seq)
+        VALUES (board_file_seq.nextval, #{oname}, #{sname}, #{fsize}, #{fpath}, #{seq})
+    </insert>
+    
+    <insert id="replyInsert" parameterType="com.tg.vo.ReplyVO">
+        INSERT INTO reply (rseq, reply, user_seq, regdate, seq)
+        VALUES (reply_seq.nextval, #{reply}, #{userSeq}, sysdate, #{seq})
+    </insert>
+    
+    <update id="boardUpdate" parameterType="com.tg.vo.BoardVO">
+        UPDATE board
+        SET title = #{title}, contents = #{contents}
+        WHERE seq = #{seq}
+    </update>
+    
+    <delete id="boardDelete" parameterType="int">
+        DELETE FROM board WHERE seq = #{seq}
+    </delete>
+    
+    <delete id="replyDelete" parameterType="int">
+        DELETE FROM reply WHERE rseq = #{rseq}
+    </delete>
+    
+</mapper>

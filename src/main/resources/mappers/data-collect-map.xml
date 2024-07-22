@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.tg.mappers.DataCollectMapper">
+
+	<resultMap id="selectFestivalMap" type="com.tg.vo.SearchFestivalVO$Item">
+	    <result column="addr1" property="addr1" />
+	    <result column="addr2" property="addr2" />
+	    <result column="booktour" property="booktour" />
+	    <result column="cat1" property="cat1" />
+	    <result column="cat2" property="cat2" />
+	    <result column="cat3" property="cat3" />
+	    <result column="contentid" property="contentid" />
+	    <result column="contenttypeid" property="contenttypeid" />
+	    <result column="createdtime" property="createdtime" />
+	    <result column="eventstartdate" property="eventstartdate" />
+	    <result column="eventenddate" property="eventenddate" />
+	    <result column="firstimage" property="firstimage" />
+	    <result column="firstimage2" property="firstimage2" />
+	    <result column="cpyrhtdivcd" property="cpyrhtdivcd" />
+	    <result column="mapx" property="mapx" />
+	    <result column="mapy" property="mapy" />
+	    <result column="mlevel" property="mlevel" />
+	    <result column="modifiedtime" property="modifiedtime" />
+	    <result column="areacode" property="areacode" />
+	    <result column="sigungucode" property="sigungucode" />
+	    <result column="tel" property="tel" />
+	    <result column="title" property="title" />
+	    <association property="detailIntro" resultMap="selectDetailIntroMap" />
+	</resultMap>
+
+	<resultMap id="selectDetailIntroMap" type="com.tg.vo.DetailIntroVO$Item">
+	    <result column="contentid" property="contentid" />
+	    <result column="contenttypeid" property="contenttypeid" />
+	    <result column="sponsor1" property="sponsor1" />
+	    <result column="sponsor1tel" property="sponsor1tel" />
+	    <result column="sponsor2" property="sponsor2" />
+	    <result column="sponsor2tel" property="sponsor2tel" />
+	    <result column="eventenddate" property="eventenddate" />
+	    <result column="playtime" property="playtime" />
+	    <result column="eventplace" property="eventplace" />
+	    <result column="eventhomepage" property="eventhomepage" />
+	    <result column="agelimit" property="agelimit" />
+	    <result column="bookingplace" property="bookingplace" />
+	    <result column="placeinfo" property="placeinfo" />
+	    <result column="subevent" property="subevent" />
+	    <result column="program" property="program" />
+	    <result column="eventstartdate" property="eventstartdate" />
+	    <result column="usetimefestival" property="usetimefestival" />
+	    <result column="discountinfofestival" property="discountinfofestival" />
+	    <result column="spendtimefestival" property="spendtimefestival" />
+	    <result column="festivalgrade" property="festivalgrade" />
+	</resultMap>
+
+
+
+
+	<select id="joinFestivalIntro" resultMap="selectFestivalMap">
+		select f.CONTENTID , f.CONTENTTYPEID, f.EVENTSTARTDATE
+			, d.SPONSOR1, d.SPONSOR1TEL
+		from SEARCH_FESTIVAL f,  detail_intro d
+		where f.CONTENTID = d.CONTENTID  and f.CONTENTTYPEID = d.CONTENTTYPEID
+	</select>
+
+
+	<select id="boardSeoulCount" resultType="int">
+		select count(1) as cnt from region_seoul
+	</select>
+
+	<select id="boardFestivalCount" resultType="int">
+		select count(1) as cnt from search_festival
+	</select>
+
+	<select id="boardCourseCount" resultType="int">
+	select count(1) as cnt from board
+	</select>
+
+	<select id="selectSeoulRegionPagination" resultType="com.tg.vo.AreaBasedListVO$Item">
+		select  s.*
+		from (
+				 select addr1, addr2, areacode, booktour, cat1, cat2, cat3,
+						contentid, contenttypeid, createdtime, dist, firstimage,
+						firstimage2, cpyrhtdivcd, mapx, mapy, mlevel,
+						modifiedtime, sigungucode, tel, title,
+						ROW_NUMBER() OVER (order by contentid) as rnum
+				 from region_seoul
+			 ) s
+		where rnum between #{startSeq } and #{endSeq }
+	</select>
+	<update id="viewCount"  parameterType="String" >
+		update search_festival
+		SET viewcnt = viewcnt + 1
+		where contentid=#{contentid}
+	</update>
+	<update id="viewCommonCount"  parameterType="String" >
+		update detail_common
+		SET viewcnt = viewcnt + 1
+		where contentid=#{contentid}
+	</update>
+
+	<select id="selectSearchEvent" resultType="com.tg.vo.SearchFestivalVO$Item">
+		select s.*
+		from (
+				 select addr1, addr2, booktour, cat1, cat2, cat3, contentid,
+						contenttypeid, createdtime, eventstartdate, eventenddate,
+						firstimage, firstimage2, cpyrhtDivCd, mapx, mapy,
+						mlevel, modifiedtime, areacode, sigungucode, tel, title,
+						ROW_NUMBER() OVER (order by contentid) as rnum
+				 from search_festival where cat2='A0208'
+			 ) s
+		where s.rnum between #{startSeq} and #{endSeq}
+	</select>
+
+	<select id="selectSearchFestival" resultType="com.tg.vo.SearchFestivalVO$Item" >
+		SELECT s.*
+		FROM (
+				 SELECT addr1, addr2, booktour, cat1, cat2, cat3, contentid,
+						contenttypeid, createdtime, eventstartdate, eventenddate,
+						firstimage, firstimage2, cpyrhtDivCd, mapx, mapy,
+						mlevel, modifiedtime, areacode, sigungucode, tel, title,
+						ROW_NUMBER() OVER (ORDER BY contentid) as rnum
+				 FROM search_festival where cat2='A0207'
+			 ) s
+		WHERE s.rnum BETWEEN #{startSeq} AND #{endSeq}
+
+	</select>
+	<select id="festivalSelectOne" resultType="com.tg.vo.SearchFestivalVO$Item" parameterType="String">
+		select addr1, addr2, booktour, cat1, cat2, cat3, contentid, contenttypeid,
+			   createdtime, eventstartdate, eventenddate, firstimage, firstimage2,
+			   cpyrhtdivcd, mapx, mapy, mlevel, modifiedtime, areacode, sigungucode,
+			   tel, title, viewcnt from search_festival where contentid=#{contentid}
+	</select>
+	<select id="eventSelectOne" resultType="com.tg.vo.SearchFestivalVO$Item" parameterType="String">
+		select addr1, addr2, booktour, cat1, cat2, cat3, contentid, contenttypeid,
+			   createdtime, eventstartdate, eventenddate, firstimage, firstimage2,
+			   cpyrhtdivcd, mapx, mapy, mlevel, modifiedtime, areacode, sigungucode,
+			   tel, title, viewcnt from search_festival where contentid=#{contentid}
+	</select>
+
+	<select id="seoulRegionMap" parameterType="String" resultType="com.tg.vo.AreaBasedListVO$Item">
+		select  addr1, addr2, areacode, booktour, cat1, cat2, cat3,
+				contentid, contenttypeid, createdtime, dist, firstimage,
+				firstimage2, cpyrhtdivcd, mapx, mapy, mlevel,
+				modifiedtime, sigungucode, tel, title from region_seoul where contenttypeid=32 or contenttypeid=38 or contenttypeid=39
+	</select>
+
+	<select id="seoulRegionSelectOne" parameterType="String" resultType="com.tg.vo.AreaBasedListVO$Item">
+		select  addr1, addr2, areacode, booktour, cat1, cat2, cat3,
+				contentid, contenttypeid, createdtime, dist, firstimage,
+				firstimage2, cpyrhtdivcd, mapx, mapy, mlevel,
+				modifiedtime, sigungucode, tel, title, viewcnt from region_seoul where contentid=#{contentid}
+	</select>
+
+	<select id="seoulRegionCommSelectOne" parameterType="String" resultType="com.tg.vo.DetailCommonVO$Item">
+		select  contentid, contenttypeid, title, createdtime, modifiedtime,
+				tel, telname, homepage, booktour, firstimage, firstimage2,
+				cpyrhtDivCd, areacode, sigungucode, cat1, cat2, cat3,
+				addr1, addr2, zipcode, mapx, mapy, mlevel, overview,viewcnt from detail_common where contentid=#{contentid}
+	</select>
+
+	<select id="daejeonRegionList" resultType="com.tg.vo.AreaBasedListVO$Item">
+		SELECT s.*
+		FROM (
+				 SELECT addr1, addr2, areacode, booktour, cat1, cat2, cat3,
+						contentid, contenttypeid, createdtime, dist, firstimage,
+						firstimage2, cpyrhtDivCd, mapx, mapy, mlevel,
+						modifiedtime, sigungucode, tel, title,
+						ROW_NUMBER() OVER (ORDER BY contentid) as rnum
+				 FROM region_daejeon
+			 ) s
+		WHERE s.rnum BETWEEN #{startSeq} AND #{endSeq}
+	</select>
+
+	<select id="busanRegionList" resultType="com.tg.vo.AreaBasedListVO$Item">
+		SELECT s.*
+		FROM (
+				 SELECT addr1, addr2, areacode, booktour, cat1, cat2, cat3,
+						contentid, contenttypeid, createdtime, dist, firstimage,
+						firstimage2, cpyrhtDivCd, mapx, mapy, mlevel,
+						modifiedtime, sigungucode, tel, title,
+						ROW_NUMBER() OVER (ORDER BY contentid) as rnum
+				 FROM region_busan
+			 ) s
+		WHERE s.rnum BETWEEN #{startSeq} AND #{endSeq}
+	</select>
+
+	<select id="daeguRegionList" resultType="com.tg.vo.AreaBasedListVO$Item">
+		SELECT s.*
+		FROM (
+				 SELECT addr1, addr2, areacode, booktour, cat1, cat2, cat3,
+						contentid, contenttypeid, createdtime, dist, firstimage,
+						firstimage2, cpyrhtDivCd, mapx, mapy, mlevel,
+						modifiedtime, sigungucode, tel, title,
+						ROW_NUMBER() OVER (ORDER BY contentid) as rnum
+				 FROM region_daegu
+			 ) s
+		WHERE s.rnum BETWEEN #{startSeq} AND #{endSeq}
+	</select>
+
+	<select id="daejeonRegionSelectOne" parameterType="String" resultType="com.tg.vo.AreaBasedListVO$Item">
+		select  addr1, addr2, areacode, booktour, cat1, cat2, cat3,
+				contentid, contenttypeid, createdtime, dist, firstimage,
+				firstimage2, cpyrhtdivcd, mapx, mapy, mlevel,
+				modifiedtime, sigungucode, tel, title from region_seoul where contentid=#{contentid}
+	</select>
+
+	<select id="introFestival"  parameterType="String" resultType="com.tg.vo.DetailIntroVO$Item">
+		SELECT contentid, contenttypeid, sponsor1, sponsor1tel, sponsor2, sponsor2tel,
+			   eventenddate, playtime, eventplace, eventhomepage, agelimit, bookingplace, placeinfo, subevent, program,
+			   eventstartdate, usetimefestival, discountinfofestival, spendtimefestival, festivalgrade
+		FROM detail_intro
+		WHERE contentid = #{contentid}
+	</select>
+	<select id="selectDetailIntro" resultType="com.tg.vo.DetailIntroVO$Item">
+		select contentid from detail_intro
+	</select>
+
+	<select id="selectCommonDetail" resultType="com.tg.vo.DetailCommonVO$Item">
+		select contentid, contenttypeid from detail_common
+	</select>
+
+
+
+
+	<select id="isFestivalExists" resultType="boolean">
+		SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+		FROM search_festival
+		WHERE contentid = #{contentid}
+	</select>
+
+
+
+
+	<select id="selectSeoulRegion" resultType="com.tg.vo.AreaBasedListVO$Item">
+		select    addr1, addr2, areacode, booktour, cat1, cat2, cat3,
+				  contentid, contenttypeid, createdtime, dist, firstimage,
+				  firstimage2, cpyrhtDivCd, mapx, mapy, mlevel,
+				  modifiedtime, sigungucode, tel, title from region_seoul
+	</select>
+
+	<select id="selectFestival" resultType="com.tg.vo.SearchFestivalVO$Item">
+		select addr1, addr2, booktour, cat1, cat2, cat3, contentid, contenttypeid,
+			   createdtime, eventstartdate, eventenddate, firstimage, firstimage2,
+			   cpyrhtdivcd, mapx, mapy, mlevel, modifiedtime, areacode, sigungucode,
+			   tel, title from search_festival
+	</select>
+
+    <insert id="insertFestival" parameterType="com.tg.vo.SearchFestivalVO$Item">
+		INSERT INTO search_festival
+		(
+			addr1, addr2, booktour, cat1, cat2, cat3, contentid, contenttypeid,
+			createdtime, eventstartdate, eventenddate, firstimage, firstimage2,
+			cpyrhtdivcd, mapx, mapy, mlevel, modifiedtime, areacode, sigungucode,
+			tel, title
+		)
+		VALUES
+			(
+				#{addr1}, #{addr2}, #{booktour}, #{cat1}, #{cat2}, #{cat3}, #{contentid}, #{contenttypeid},
+				#{createdtime}, #{eventstartdate}, #{eventenddate}, #{firstimage}, #{firstimage2},
+				#{cpyrhtDivCd}, #{mapx}, #{mapy}, #{mlevel}, #{modifiedtime}, #{areacode}, #{sigungucode},
+				#{tel}, #{title}
+			)
+    </insert>
+
+    <insert id="insertDetailIntro" parameterType="com.tg.vo.DetailIntroVO$Item">
+	    INSERT INTO detail_intro (
+		    contentid, contenttypeid, sponsor1, sponsor1tel, sponsor2, sponsor2tel,
+			eventenddate, playtime, eventplace, eventhomepage, agelimit, bookingplace, placeinfo, subevent, program,
+		    eventstartdate, usetimefestival, discountinfofestival, spendtimefestival, festivalgrade)
+	    VALUES (
+				   #{contentid, jdbcType=VARCHAR}, #{contenttypeid, jdbcType=VARCHAR}, #{sponsor1, jdbcType=VARCHAR},
+				   #{sponsor1tel, jdbcType=VARCHAR}, #{sponsor2, jdbcType=VARCHAR}, #{sponsor2tel, jdbcType=VARCHAR},
+				   #{eventenddate, jdbcType=VARCHAR}, #{playtime, jdbcType=VARCHAR}, #{eventplace, jdbcType=VARCHAR},
+				   #{eventhomepage, jdbcType=VARCHAR}, #{agelimit, jdbcType=VARCHAR}, #{bookingplace, jdbcType=VARCHAR},
+				   #{placeinfo, jdbcType=VARCHAR}, #{subevent, jdbcType=VARCHAR}, #{program, jdbcType=VARCHAR},
+				   #{eventstartdate, jdbcType=VARCHAR}, #{usetimefestival, jdbcType=VARCHAR}, #{discountinfofestival, jdbcType=VARCHAR},
+				   #{spendtimefestival, jdbcType=VARCHAR}, #{festivalgrade, jdbcType=VARCHAR}
+	    )
+	</insert>
+
+	<insert id="insertCommon" parameterType="com.tg.vo.DetailCommonVO$Item">
+		INSERT INTO detail_common (
+			contentid, contenttypeid, title, createdtime, modifiedtime,
+			tel, telname, homepage, booktour, firstimage, firstimage2,
+			cpyrhtDivCd, areacode, sigungucode, cat1, cat2, cat3,
+			addr1, addr2, zipcode, mapx, mapy, mlevel, overview
+		)
+		VALUES (
+				   #{contentid}, #{contenttypeid}, #{title}, #{createdtime}, #{modifiedtime},
+				   #{tel}, #{telname}, #{homepage}, #{booktour}, #{firstimage}, #{firstimage2},
+				   #{cpyrhtDivCd}, #{areacode}, #{sigungucode}, #{cat1}, #{cat2}, #{cat3},
+				   #{addr1}, #{addr2}, #{zipcode}, #{mapx}, #{mapy}, #{mlevel}, #{overview}
+			   )
+	</insert>
+
+	<insert id="insertImage" parameterType="com.tg.vo.DetailImageVO$Item">
+		INSERT INTO Detail_image (
+			contentid, originimgurl, imgname, smallimageurl, cpyrhtDivCd, serialnum
+		)
+		VALUES (
+				   #{contentid}, #{originimgurl}, #{imgname}, #{smallimageurl}, #{cpyrhtDivCd}, #{serialnum}
+			   )
+	</insert>
+
+    
+</mapper>
